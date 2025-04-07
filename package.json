@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "amqplib": "0.10.5",
-    "mongoose": "8.9.5",
+    "mongoose": "8.13.2",
     "simpl-loggar": "^0.5.3"
   },
   "devDependencies": {
