@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file
 export class FullError extends Error {
   code = '000';
   status = 500;
@@ -443,6 +442,70 @@ export class ActionNotAllowed extends FullError {
     this.name = 'ActionNotAllowed';
     this.code = '015';
     this.status = 400;
+  }
+}
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     NoUserWithProvidedName:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'NoUserWithProvidedName'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '016'
+ *         message:
+ *           type: string
+ *           description: Error message describing the error cause.
+ *           example: "No user with provided name"
+ */
+export class NoUserWithProvidedName extends FullError {
+  constructor(names?: string[]) {
+    super(
+      names
+        ? names.length === 1
+          ? `User ${names.join(', ')} does not exist`
+          : `Users ${names.join(', ')} does not exist`
+        : 'No user with provided name',
+    );
+    this.name = 'NoUserWithProvidedName';
+    this.status = 400;
+    this.code = '016';
+  }
+}
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     NoRepositoryControllerSpecified:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'NoRepositoryControllerSpecified'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '16'
+ *         message:
+ *           type: string
+ *           description: Error message describing the error cause.
+ *           example: "No repository controller specified"
+ */
+export class NoRepositoryControllerSpecified extends FullError {
+  constructor() {
+    super('No repository controller specified');
+    this.name = 'NoRepositoryControllerSpecified';
+    this.code = '16';
+    this.status = 500;
   }
 }
 

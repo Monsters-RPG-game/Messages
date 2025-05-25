@@ -3,17 +3,17 @@ import { EMessageType } from '../../../../enums/db.js';
 import * as errors from '../../../../errors/index.js';
 import type SendChatMessageDto from './dto.js';
 import type { IAbstractSubController } from '../../../../types/index.js';
-import type DetailsRepository from '../../../details/repository/index.js';
-import type ChatMessagesRepository from '../../repository/index.js';
+import type { IDetailsRepository } from '../../../details/repository/types.js';
+import type { IChatMessageRepository } from '../../repository/types.js';
 
 export default class SendChatMessageController implements IAbstractSubController<void> {
-  constructor(repo: ChatMessagesRepository, detailsRepo: DetailsRepository) {
+  constructor(repo: IChatMessageRepository, detailsRepo: IDetailsRepository) {
     this.repo = repo;
     this.detailsRepo = detailsRepo;
   }
 
-  private accessor repo: ChatMessagesRepository;
-  private accessor detailsRepo: DetailsRepository;
+  private accessor repo: IChatMessageRepository;
+  private accessor detailsRepo: IDetailsRepository;
 
   async execute(data: SendChatMessageDto, userId: string): Promise<void> {
     const { receiver, body, sender } = data;

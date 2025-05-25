@@ -11,7 +11,3 @@ export enum EChatTargets {
   Read = 'read',
   GetUnread = 'getUnread',
 }
-
-export enum ESharedTargets {
-  RemoveUser = 'removeUser',
-}

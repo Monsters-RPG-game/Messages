@@ -4,14 +4,13 @@ import fakeData from '../utils/fakeData.json';
 import { IMessageEntity } from '../../src/modules/messages/entity.js';
 import FakeFactory from '../utils/fakeFactory/src/index.js';
 import { IMessageDetailsEntity } from '../../src/modules/details/entity.js';
-import MessageModel from '../../src/modules/messages/model.js';
 import sleep from '../../src/utils/index.js';
 
 describe('Message - get', () => {
   const db = new FakeFactory();
   const fakeMessage = fakeData.messages[0] as IMessageEntity;
   const fakeDetails = fakeData.details[0] as IMessageDetailsEntity;
-  const repo = new Repository(MessageModel);
+  const repo = Repository.createInstance()
 
   afterEach(async () => {
     await db.cleanUp();

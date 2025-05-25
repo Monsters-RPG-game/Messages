@@ -1,7 +1,5 @@
-import MessagesModel from './model.js';
 import MessagesRepository from './repository/index.js';
 import * as enums from '../../enums/index.js';
-import DetailsModel from '../details/model.js';
 import GetMessagesController from './subModules/get/index.js';
 import GetUnreadMessagesController from './subModules/getUnread/index.js';
 import ReadMessageController from './subModules/read/index.js';
@@ -15,8 +13,8 @@ export default class MessagesController extends AbstractController<enums.EContro
    * @returns Void.
    */
   protected init(): void {
-    const messagesRepo = new MessagesRepository(MessagesModel);
-    const detailsRepo = new DetailsRepository(DetailsModel);
+    const messagesRepo = MessagesRepository.createInstance();
+    const detailsRepo = DetailsRepository.createInstance();
 
     this.register(enums.EMessagesActions.Get, new GetMessagesController(messagesRepo));
     this.register(enums.EMessagesActions.Send, new SendMessageController(messagesRepo, detailsRepo));

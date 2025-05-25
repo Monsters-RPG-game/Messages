@@ -6,14 +6,13 @@ import FakeFactory from '../utils/fakeFactory/src/index.js';
 import { IFullError } from '../../src/types/index.js';
 import { EMessageType } from '../../src/enums/index.js';
 import { MongoIncorrectEnumError, MongoMissingError, MongoNotObjectIdError } from '../utils/errors/index.js';
-import ChatModel from '../../src/modules/chat/model.js';
 import { INewMessage } from '../../src/modules/chat/entity.js';
 import sleep from '../../src/utils/index.js';
 
 describe('Chat - add', () => {
   const db = new FakeFactory();
   const fakeMessage = fakeData.messages[0] as IMessageEntity;
-  const repo = new Repository(ChatModel);
+  const repo = Repository.createInstance();
   const newMessage: INewMessage = {
     owner: fakeMessage.sender,
     type: fakeMessage.type,

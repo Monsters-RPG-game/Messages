@@ -3,13 +3,12 @@ import Repository from '../../src/modules/details/repository/index.js';
 import fakeData from '../utils/fakeData.json';
 import FakeFactory from '../utils/fakeFactory/src/index.js';
 import { IMessageDetailsEntity } from '../../src/modules/details/entity.js';
-import DetailsModel from '../../src/modules/details/model.js';
 import sleep from '../../src/utils/index.js';
 
 describe('Details - get', () => {
   const db = new FakeFactory();
   const fakeDetails = fakeData.details[0] as IMessageDetailsEntity;
-  const repo = new Repository(DetailsModel);
+  const repo = Repository.createInstance();
 
   afterEach(async () => {
     await db.cleanUp();

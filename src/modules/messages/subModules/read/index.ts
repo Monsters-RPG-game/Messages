@@ -1,14 +1,14 @@
 import * as errors from '../../../../errors/index.js';
 import type ReadMessageDto from './dto.js';
 import type { IAbstractSubController } from '../../../../types/index.js';
-import type MessagesRepository from '../../repository/index.js';
+import type { IMessagesRepository } from '../../repository/types.js';
 
 export default class ReadMessageController implements IAbstractSubController<void> {
-  constructor(repo: MessagesRepository) {
+  constructor(repo: IMessagesRepository) {
     this.repo = repo;
   }
 
-  private accessor repo: MessagesRepository;
+  private accessor repo: IMessagesRepository;
 
   async execute(data: ReadMessageDto): Promise<void> {
     const { chatId, user } = data;

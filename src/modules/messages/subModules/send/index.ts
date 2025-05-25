@@ -3,17 +3,17 @@ import { EMessageType } from '../../../../enums/db.js';
 import * as errors from '../../../../errors/index.js';
 import type SendMessageDto from './dto.js';
 import type { IAbstractSubController } from '../../../../types/index.js';
-import type DetailsRepository from '../../../details/repository/index.js';
-import type MessagesRepository from '../../repository/index.js';
+import type { IDetailsRepository } from '../../../details/repository/types.js';
+import type { IMessagesRepository } from '../../repository/types.js';
 
 export default class SendMessageController implements IAbstractSubController<void> {
-  constructor(repo: MessagesRepository, details: DetailsRepository) {
+  constructor(repo: IMessagesRepository, details: IDetailsRepository) {
     this.repo = repo;
     this.details = details;
   }
 
-  private accessor repo: MessagesRepository;
-  private accessor details: DetailsRepository;
+  private accessor repo: IMessagesRepository;
+  private accessor details: IDetailsRepository;
 
   async execute(data: SendMessageDto, userId: string): Promise<void> {
     if (data.receiver === userId) throw new errors.ActionNotAllowed();

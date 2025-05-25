@@ -1,4 +1,3 @@
-import DetailsModel from './model.js';
 import DetailsRepository from './repository/index.js';
 import AddMessageDetailsController from './subModules/add/index.js';
 import * as enums from '../../enums/index.js';
@@ -10,7 +9,7 @@ export default class DetailsController extends AbstractController<enums.EControl
    * @returns Void.
    */
   protected init(): void {
-    const repo = new DetailsRepository(DetailsModel);
+    const repo = DetailsRepository.createInstance();
 
     this.register(enums.EMessageDetailsActions.Add, new AddMessageDetailsController(repo));
   }
