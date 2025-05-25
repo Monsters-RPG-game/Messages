@@ -5,13 +5,12 @@ import FakeFactory from '../utils/fakeFactory/src/index.js';
 import { IFullError } from '../../src/types/index.js';
 import { MongoIncorrectMinLengthError, MongoMissingError } from '../utils/errors/index.js';
 import { IMessageDetailsEntity } from '../../src/modules/details/entity.js';
-import MessageDetailsModel from '../../src/modules/details/model.js';
 import sleep from '../../src/utils/index.js';
 
 describe('Details - add', () => {
   const db = new FakeFactory();
   const fakeDetails = fakeData.details[0] as IMessageDetailsEntity;
-  const repo = new Repository(MessageDetailsModel);
+  const repo = Repository.createInstance();
 
   afterEach(async () => {
     await db.cleanUp();

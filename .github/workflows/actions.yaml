@@ -17,10 +17,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Cache node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -39,24 +39,21 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup config files
         run: |
           mkdir -p config
           echo '{
-            "amqpURI": "rabbitUrl",
-            "redisURI": "redisUrl",
-            "redisTestURI": "redisTesUrl",
-            "accessToken": "accessToken",
-            "refToken": "refreshToken",
-            "mongoURI": "mongoUrl"
+            "amqpURL": "rabbitUrl",
+            "mongoURL": "redisUrl",
+            "repository": "mongo"
           }' > config/devConfig.json
           cp config/devConfig.json config/prodConfig.json
           cp config/devConfig.json config/testConfig.json
 
       - name: Upload config
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: config
           path: config/
@@ -70,13 +67,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: npm install
 
       - name: Cache node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -84,7 +81,7 @@ jobs:
             ${{ runner.OS }}-node-
 
       - name: Download config
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: config
           path: config/
@@ -101,13 +98,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: npm install
 
       - name: Cache node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -115,7 +112,7 @@ jobs:
             ${{ runner.OS }}-node-
 
       - name: Download config
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: config
           path: config/
@@ -133,13 +130,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: npm install
 
       - name: Cache node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -147,7 +144,7 @@ jobs:
             ${{ runner.OS }}-node-
 
       - name: Download config
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: config
           path: config/

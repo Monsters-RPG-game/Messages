@@ -13,9 +13,7 @@ import { IReadChatMessageDto } from '../../../src/modules/chat/subModules/read/t
 import { ISendChatMessageDto } from '../../../src/modules/chat/subModules/send/types.js';
 import { IUserBrokerInfo } from '../../../src/types/user.js';
 import ChatRepository from '../../../src/modules/chat/repository/index.js';
-import ChatModel from '../../../src/modules/chat/model.js';
 import DetailsRepository from '../../../src/modules/details/repository/index.js';
-import DetailsModel from '../../../src/modules/details/model.js';
 import { IFullError } from '../../../src/types/errors.js';
 import GetChatMessageDto from '../../../src/modules/chat/subModules/get/dto.js';
 import ReadChatMessageDto from '../../../src/modules/chat/subModules/read/dto.js';
@@ -45,8 +43,8 @@ describe('Chat', () => {
     receiver: fakeMessage.sender,
     sender: fakeMessage.receiver,
   };
-  const chatRepo = new ChatRepository(ChatModel)
-  const detailsRepo = new DetailsRepository(DetailsModel)
+  const chatRepo = ChatRepository.createInstance()
+  const detailsRepo =  DetailsRepository.createInstance()
   const getController = new GetController(chatRepo, detailsRepo);
   const getUnreadController = new GetUnreadChatMessageController(chatRepo, detailsRepo);
   const sendController = new SendController(chatRepo, detailsRepo);

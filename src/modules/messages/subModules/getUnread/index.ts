@@ -1,14 +1,14 @@
 import type GetMessageDto from './dto.js';
 import type { IAbstractSubController } from '../../../../types/index.js';
 import type { IUnreadMessageEntity, IUnreadMessageListEntity } from '../../entity.js';
-import type MessagesRepository from '../../repository/index.js';
+import type { IMessagesRepository } from '../../repository/types.js';
 
 export default class GetUnreadMessageController implements IAbstractSubController<IUnreadMessageListEntity[]> {
-  constructor(repo: MessagesRepository) {
+  constructor(repo: IMessagesRepository) {
     this.repo = repo;
   }
 
-  private accessor repo: MessagesRepository;
+  private accessor repo: IMessagesRepository;
 
   async execute(data: GetMessageDto, userId: string): Promise<IUnreadMessageListEntity[]> {
     const { page } = data;

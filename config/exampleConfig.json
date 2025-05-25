@@ -1,4 +1,5 @@
 {
   "amqpURL": "amqp://user:password@address:port",
   "mongoURL": "mongodb://user:password@address:port",
+  "repository": "mongo"
 }

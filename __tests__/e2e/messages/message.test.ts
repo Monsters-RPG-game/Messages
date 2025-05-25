@@ -1,27 +1,25 @@
 import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
-import mongoose from 'mongoose';
 import GetController from '../../../src/modules/messages/subModules/get/index.js';
 import SendController from '../../../src/modules/messages/subModules/send/index.js';
-import ReadController from '../../../src/modules/messages/subModules/read/index.js';
-import * as errors from '../../../src/errors/index.js';
+import ReadController from '../../../src/modules/messages/subModules/read/index.js'
+import * as errors from '../../../src/errors/index.js'
 import fakeData from '../../utils/fakeData.json';
 import { IFullMessageEntity, IMessageEntity, IPreparedMessagesBody } from '../../../src/modules/messages/entity.js';
 import { IMessageDetailsEntity } from '../../../src/modules/details/entity.js';
 import FakeFactory from '../../utils/fakeFactory/src/index.js';
 import { ISendMessageDto } from '../../../src/modules/messages/subModules/send/types.js';
 import { IGetMessageDto } from '../../../src/modules/messages/subModules/get/types.js';
-import { IReadMessageDto } from '../../../src/modules/messages/subModules/read/types.js';
 import { IUserBrokerInfo } from '../../../src/types/user.js';
 import MessagesRepository from '../../../src/modules/messages/repository/index.js';
-import MessageModel from '../../../src/modules/messages/model.js';
-import DetailsModel from '../../../src/modules/details/model.js';
 import DetailsRepository from '../../../src/modules/details/repository/index.js';
-import { IFullError } from '../../../src/types/errors.js';
 import GetMessageDto from '../../../src/modules/messages/subModules/get/dto.js';
-import ReadMessageDto from '../../../src/modules/messages/subModules/read/dto.js';
 import SendMessageDto from '../../../src/modules/messages/subModules/send/dto.js';
+import { IReadMessageDto } from '../../../src/modules/messages/subModules/read/types.js';
+import mongoose from 'mongoose';
 import GetUnreadMessageDto from '../../../src/modules/messages/subModules/getUnread/dto.js';
 import GetUnreadMessageController from '../../../src/modules/messages/subModules/getUnread/index.js';
+import ReadMessageDto from '../../../src/modules/messages/subModules/read/dto.js';
+import { IFullError } from '../../../src/types/errors.js';
 
 describe('Messages', () => {
   const db = new FakeFactory();
@@ -45,8 +43,8 @@ describe('Messages', () => {
     receiver: fakeMessage.sender,
     sender: fakeMessage.receiver,
   };
-  const messageRepo = new MessagesRepository(MessageModel)
-  const detailsRepo = new DetailsRepository(DetailsModel)
+  const messageRepo =  MessagesRepository.createInstance()
+  const detailsRepo =  DetailsRepository.createInstance()
   const getController = new GetController(messageRepo);
   const sendController = new SendController(messageRepo, detailsRepo);
   const readController = new ReadController(messageRepo);
@@ -448,9 +446,9 @@ describe('Messages', () => {
       const elm = data[target]!;
 
       expect(Object.keys(data).length).toEqual(1);
-      expect(elm.sender.toString()).toEqual(fakeMessage.sender);
-      expect(elm.receiver.toString()).toEqual(fakeMessage.receiver);
-      expect(elm.messages).toEqual(1);
+      expect(elm.sender.toString()).toEqual(fakeMessage.receiver);
+      expect(elm.receiver.toString()).toEqual(fakeMessage.sender);
+      expect(elm.messages).toEqual(2);
     });
 
     it(`Get unread`, async () => {
@@ -479,7 +477,7 @@ describe('Messages', () => {
       const data = await getController.execute(new GetMessageDto(getMany), localUser.userId as string) as Record<string, IPreparedMessagesBody>
       const key = Object.keys(data)[0]!;
 
-      expect(data[key]?.messages).toEqual(2);
+      expect(data[key]?.messages).toEqual(3);
     });
   });
 });

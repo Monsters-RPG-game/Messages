@@ -1,112 +1,84 @@
-import mongoose from 'mongoose';
-import * as enums from '../../../enums/index.js';
-import AbstractRepository from '../../../tools/abstractions/repository.js';
-import type { IChatMessageRepository } from './types.js';
-import type { IObjectUpdate } from '../../../types/generic.js';
+import Log from 'simpl-loggar';
+import MongoChatRepository from './logic/mongo.js';
+import { NoRepositoryControllerSpecified } from '../../../errors/index.js';
+import getConfig from '../../../tools/configLoader.js';
+import Chat from '../model.js';
+import type { IFullMessageEntity } from '../../messages/entity.js';
 import type {
+  IChatMessageEntity,
   IFullChatMessageEntity,
   IGetOneChatMessageEntity,
-  IChatMessageEntity,
+  INewMessage,
   IUnreadChatMessageEntity,
 } from '../entity.js';
-import type ChatMessageModel from '../model.js';
-import type { IChatMessage } from '../types.js';
+import type { IChatMessageRepository } from './types.js';
+import type { FilterQuery } from 'mongoose';
 
-export default class ChatRepository
-  extends AbstractRepository<IChatMessage, typeof ChatMessageModel, enums.EControllers.Messages>
-  implements IChatMessageRepository
-{
-  async getByOwner(owner: string, page: number): Promise<IChatMessageEntity[]> {
-    return this.model
-      .find({ $or: [{ sender: owner }, { receiver: owner }] })
-      .select({
-        _id: false,
-        sender: true,
-        receiver: true,
-        type: true,
-        chatId: true,
-      })
-      .limit(100)
-      .skip((page <= 0 ? 0 : page - 1) * 100)
-      .sort({ _id: -1 })
-      .lean<IChatMessageEntity[]>();
+class ChatRepository implements IChatMessageRepository {
+  constructor(repository: IChatMessageRepository) {
+    this.repository = repository;
   }
 
-  /**
-   * Get one message with selected sender and receiver. Currently used to validate if user ever had conversation.
-   * @param sender
-   * @param receiver
-   */
+  private accessor repository: IChatMessageRepository;
+
+  async get(id: unknown): Promise<IChatMessageEntity | null> {
+    return this.repository.get(id);
+  }
+
+  async getByOwner(owner: string, page: number): Promise<IChatMessageEntity[]> {
+    return this.repository.getByOwner(owner, page);
+  }
+
   async getOne(sender: string, receiver: string): Promise<{ chatId: string } | null> {
-    return this.model
-      .findOne({
-        $or: [
-          { sender, receiver },
-          { receiver: sender, sender: receiver },
-        ],
-      })
-      .select({ chatId: true })
-      .lean<{ chatId: string } | null>();
+    return this.repository.getOne(sender, receiver);
   }
 
   async getOneByChatId(chatId: string, receiver: string): Promise<IGetOneChatMessageEntity | null> {
-    return this.model
-      .findOne({ chatId, receiver })
-      .select({
-        read: true,
-        chatId: true,
-        sender: true,
-      })
-      .lean<IGetOneChatMessageEntity | null>();
+    return this.repository.getOneByChatId(chatId, receiver);
   }
 
   async getUnread(owner: string, page: number): Promise<IUnreadChatMessageEntity[]> {
-    return this.model
-      .find({ $or: [{ sender: owner }, { receiver: owner }], read: false, type: enums.EMessageType.Chat })
-      .select({ chatId: true, sender: true, receiver: true, createdAt: true })
-      .sort({ createdAt: 1 })
-      .limit(100)
-      .skip((page <= 0 ? 0 : page - 1) * 100)
-      .lean<IUnreadChatMessageEntity[]>();
+    return this.repository.getUnread(owner, page);
   }
 
-  async getWithDetails(chatId: string, page: number): Promise<IFullChatMessageEntity[]> {
-    const data = (await this.model
-      .aggregate([
-        {
-          $match: { chatId: new mongoose.Types.ObjectId(chatId) },
-        },
-        {
-          $lookup: {
-            from: enums.EDbCollections.MessageDetails,
-            localField: 'body',
-            foreignField: '_id',
-            as: 'details',
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            chatId: 1,
-            sender: 1,
-            receiver: 1,
-            read: 1,
-            message: { $arrayElemAt: ['$details.message', 0] },
-          },
-        },
-      ])
-      .limit(100)
-      .sort({ _id: -1 })
-      .skip((page <= 0 ? 0 : page - 1) * 100)) as IFullChatMessageEntity[];
-
-    return !data || data.length === 0 ? [] : data;
+  async getWithDetails(owner: string, page: number): Promise<IFullChatMessageEntity[]> {
+    return this.repository.getWithDetails(owner, page);
   }
 
-  async update(
-    chatId: string,
-    sender: string,
-    data: IObjectUpdate<IChatMessageEntity, keyof IChatMessageEntity>,
-  ): Promise<void> {
-    await this.model.updateMany({ chatId, sender }, { $set: { ...data } }, { upsert: true });
+  async update(chatId: string, sender: string, data: Partial<IChatMessageEntity>): Promise<void> {
+    return this.repository.update(chatId, sender, data);
   }
+
+  async getAll(page: number): Promise<IFullMessageEntity[]> {
+    return this.repository.getAll(page);
+  }
+
+  async add(data: INewMessage): Promise<string> {
+    return this.repository.add(data);
+  }
+
+  async count(filter: FilterQuery<Record<string, unknown>>): Promise<number> {
+    return this.repository.count(filter);
+  }
+
+  async getIn(target: string, value: string[]): Promise<IFullMessageEntity[]> {
+    return this.repository.getIn(target, value);
+  }
+}
+
+export default class ChatFacade {
+  static createInstance(): IChatMessageRepository {
+    const repositoryTarget = getConfig().repository;
+
+    switch (repositoryTarget) {
+      case 'mongo':
+        ChatFacade.instance = new ChatRepository(new MongoChatRepository(Chat));
+        return ChatFacade.instance;
+      default:
+        Log.error('No repository controller specified. Please specify type of controller in config files');
+        throw new NoRepositoryControllerSpecified();
+    }
+  }
+
+  private static accessor instance: IChatMessageRepository | undefined = undefined;
 }

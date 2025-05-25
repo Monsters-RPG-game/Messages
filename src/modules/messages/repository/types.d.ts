@@ -1,4 +1,3 @@
-import type { IObjectUpdate } from '../../../types/generic.js';
 import type {
   IFullMessageEntity,
   IGetMessageEntity,
@@ -6,6 +5,8 @@ import type {
   IMessageEntity,
   IUnreadMessageEntity,
 } from '../entity.js';
+import type { INewMessage } from 'modules/chat/entity.js';
+import type { FilterQuery } from 'mongoose';
 
 export interface IMessagesRepository {
   getByOwner(owner: string, page: number): Promise<IGetMessageEntity[]>;
@@ -13,5 +14,10 @@ export interface IMessagesRepository {
   getOneByChatId(chatId: string, receiver: string): Promise<IGetOneMessageEntity | null>;
   getUnread(owner: string, page: number): Promise<IUnreadMessageEntity[]>;
   getWithDetails(owner: string, page: number): Promise<IFullMessageEntity[]>;
-  update(chatId: string, sender: string, data: IObjectUpdate<IMessageEntity, keyof IMessageEntity>): Promise<void>;
+  update(chatId: string, sender: string, data: Partial<IMessageEntity>): Promise<void>;
+  getAll(page: number): Promise<IGetMessageEntity[]>;
+  add(data: INewMessage): Promise<string>;
+  count(filter: FilterQuery<Record<string, unknown>>): Promise<number>;
+  getIn(target: string, value: string[]): Promise<IGetMessageEntity[]>;
+  get(_id: unknown): Promise<IMessageEntity | null>;
 }

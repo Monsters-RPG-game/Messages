@@ -1,16 +1,16 @@
 import type GetMessageDto from './dto.js';
 import type { IAbstractSubController } from '../../../../types/index.js';
 import type { IFullMessageEntity, IGetMessageEntity, IPreparedMessages, IPreparedMessagesBody } from '../../entity.js';
-import type MessagesRepository from '../../repository/index.js';
+import type { IMessagesRepository } from 'modules/messages/repository/types.js';
 
 export default class GetMessageController
   implements IAbstractSubController<Record<string, IPreparedMessagesBody> | IFullMessageEntity[]>
 {
-  constructor(repo: MessagesRepository) {
+  constructor(repo: IMessagesRepository) {
     this.repo = repo;
   }
 
-  private accessor repo: MessagesRepository;
+  private accessor repo: IMessagesRepository;
 
   async execute(
     data: GetMessageDto,
