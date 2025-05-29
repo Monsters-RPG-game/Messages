@@ -494,7 +494,7 @@ export class NoUserWithProvidedName extends FullError {
  *         code:
  *           type: string
  *           description: Unique code associated with the error.
- *           example: '16'
+ *           example: '016'
  *         message:
  *           type: string
  *           description: Error message describing the error cause.
@@ -504,7 +504,7 @@ export class NoRepositoryControllerSpecified extends FullError {
   constructor() {
     super('No repository controller specified');
     this.name = 'NoRepositoryControllerSpecified';
-    this.code = '16';
+    this.code = '016';
     this.status = 500;
   }
 }
