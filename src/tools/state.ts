@@ -33,7 +33,7 @@ class State implements IState {
     this._controllers = val;
   }
 
-  @Log.decorateSyncLog('State', 'App closed')
+  @Log.decorateLog('State', 'App closed')
   kill(): void {
     this.mongo.disconnect();
     this.broker.close();

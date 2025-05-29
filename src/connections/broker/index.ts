@@ -8,7 +8,7 @@ import sleep from '../../utils/index.js';
 import type * as types from '../../types/index.js';
 
 export default class Broker {
-  private _connection: amqplib.Connection | undefined;
+  private _connection: amqplib.ChannelModel | undefined;
   private _connectionTries = 0;
   private _channel: amqplib.Channel | undefined;
   private _channelTries = 0;
