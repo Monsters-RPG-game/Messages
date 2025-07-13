@@ -1,6 +1,6 @@
 import Log from 'simpl-loggar';
 import Broker from './connections/broker/index.js';
-import Mongo from './connections/mongo/index.js';
+import Mongo from './connections/mongo/factory.js';
 import Bootstrap from './tools/bootstrap.js';
 import Liveness from './tools/liveness.js';
 import State from './tools/state.js';
@@ -46,12 +46,10 @@ class App {
 
     State.broker = broker;
     State.controllers = controllers;
-    State.mongo = mongo;
 
-    State.controllers.init();
-
+    State.mongo = await mongo.create();
     await broker.init();
-    await mongo.init();
+    State.controllers.init();
 
     Log.log('Server', 'Server started');
 
