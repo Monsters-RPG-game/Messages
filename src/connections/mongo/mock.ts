@@ -27,6 +27,12 @@ export default class Mock {
     Log.log('Mongo', 'Started mock server');
   }
 
+  disconnect(): void {
+    mongoose.disconnect().catch((err) => {
+      Log.error('Mongo', 'Cannot disconnect', (err as Error).message);
+    });
+  }
+
   private async fulfillDatabase(): Promise<void> {
     const messages = fakeData.messages as IMessageEntity[];
     const details = fakeData.details as IMessageDetailsEntity[];

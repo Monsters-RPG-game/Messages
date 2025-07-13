@@ -1,19 +1,19 @@
 import Log from 'simpl-loggar';
 import type Bootstrap from './bootstrap.js';
 import type Broker from '../connections/broker/index.js';
-import type Mongo from '../connections/mongo/index.js';
+import type { IMongoInstance } from '../connections/mongo/types.js';
 import type { IState } from '../types/index.js';
 
 class State implements IState {
-  private _mongo: Mongo | null = null;
+  private _mongo: IMongoInstance | null = null;
   private _broker: Broker | null = null;
   private _controllers: Bootstrap | null = null;
 
-  get mongo(): Mongo {
+  get mongo(): IMongoInstance {
     return this._mongo!;
   }
 
-  set mongo(value: Mongo) {
+  set mongo(value: IMongoInstance) {
     this._mongo = value;
   }
 
