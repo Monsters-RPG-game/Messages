@@ -10,7 +10,7 @@
   "main": "build/main.js",
   "scripts": {
     "start": "node build/src/main.js",
-    "start:dev": "concurrently 'npm run build:watch' 'cross-env NODE_ENV=development nodemon build/src/main.js'",
+    "start:dev": "cross-env NODE_ENV=development nodemon --exec tsx src/main.ts",
     "start:testDev": "cross-env NODE_ENV=testDev node build/src/main.js",
     "build": "tsc -p tsconfig.json",
     "build:watch": "tsc -w -p tsconfig.json",
@@ -38,7 +38,6 @@
     "@types/semver": "^7.5.8",
     "@typescript-eslint/eslint-plugin": "8.36.0",
     "@typescript-eslint/parser": "8.36.0",
-    "concurrently": "^9.0.1",
     "cross-env": "7.0.3",
     "eslint": "9.31.0",
     "eslint-config-prettier": "10.1.5",
