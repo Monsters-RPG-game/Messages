@@ -35,7 +35,6 @@ export default class Router {
       (toLog.payload as Record<string, string>).password = '***';
     }
 
-    Log.log('Rabbit', 'Got new message');
-    Log.log('Rabbit', toLog);
+    Log.debug('Rabbit', 'Got new message', toLog);
   }
 }
