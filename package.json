@@ -23,6 +23,7 @@
     "test:db": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --runInBand --config __tests__/jest.config.db.ts"
   },
   "dependencies": {
+    "@monsters/validator": "github:Monsters-RPG-game/Packages-validator",
     "amqplib": "0.10.8",
     "mongoose": "8.16.3",
     "simpl-loggar": "0.7.7"
