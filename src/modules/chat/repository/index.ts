@@ -1,7 +1,7 @@
 import Log from 'simpl-loggar';
 import MongoChatRepository from './logic/mongo.js';
 import { NoRepositoryControllerSpecified } from '../../../errors/index.js';
-import getConfig from '../../../tools/configLoader.js';
+import ConfigLoader from '../../../tools/config/index.js';
 import Chat from '../model.js';
 import type { IFullMessageEntity } from '../../messages/entity.js';
 import type {
@@ -68,7 +68,7 @@ class ChatRepository implements IChatMessageRepository {
 
 export default class ChatFacade {
   static createInstance(): IChatMessageRepository {
-    const repositoryTarget = getConfig().repository;
+    const repositoryTarget = ConfigLoader.getConfig().repository;
 
     switch (repositoryTarget) {
       case 'mongo':

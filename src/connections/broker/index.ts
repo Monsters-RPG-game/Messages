@@ -3,7 +3,7 @@ import Log from 'simpl-loggar';
 import Router from './router.js';
 import * as enums from '../../enums/index.js';
 import { NotConnectedError } from '../../errors/index.js';
-import getConfig from '../../tools/configLoader.js';
+import ConfigLoader from '../../tools/config/index.js';
 import sleep from '../../utils/index.js';
 import type * as types from '../../types/index.js';
 
@@ -63,7 +63,7 @@ export default class Broker {
     }
 
     try {
-      const connection = await amqplib.connect(getConfig().amqpURL);
+      const connection = await amqplib.connect(ConfigLoader.getConfig().amqpURL);
 
       Log.log('Rabbit', 'Connected to rabbit');
       this._connection = connection;
