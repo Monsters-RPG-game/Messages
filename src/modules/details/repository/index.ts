@@ -1,7 +1,7 @@
 import Log from 'simpl-loggar';
 import MongoDetailsRepository from './logic/mongo.js';
 import { NoRepositoryControllerSpecified } from '../../../errors/index.js';
-import getConfig from '../../../tools/configLoader.js';
+import ConfigLoader from '../../../tools/config/index.js';
 import MessageDetails from '../model.js';
 import type { IMessageDetailsEntity } from '../entity.js';
 import type { IDetailsRepository } from './types.js';
@@ -38,7 +38,7 @@ class DetailsRepository implements IDetailsRepository {
 
 export default class DetailsFacade {
   static createInstance(): IDetailsRepository {
-    const repositoryTarget = getConfig().repository;
+    const repositoryTarget = ConfigLoader.getConfig().repository;
 
     switch (repositoryTarget) {
       case 'mongo':

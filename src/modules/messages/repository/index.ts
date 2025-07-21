@@ -1,7 +1,7 @@
 import Log from 'simpl-loggar';
 import MongoMessagesRepository from './logic/mongo.js';
 import { NoRepositoryControllerSpecified } from '../../../errors/index.js';
-import getConfig from '../../../tools/configLoader.js';
+import ConfigLoader from '../../../tools/config/index.js';
 import Message from '../model.js';
 import type {
   IFullMessageEntity,
@@ -68,7 +68,7 @@ class MessagesRepository implements IMessagesRepository {
 
 export default class MessagesFacade {
   static createInstance(): IMessagesRepository {
-    const repositoryTarget = getConfig().repository;
+    const repositoryTarget = ConfigLoader.getConfig().repository;
 
     switch (repositoryTarget) {
       case 'mongo':
