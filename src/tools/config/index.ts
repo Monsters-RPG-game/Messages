@@ -26,8 +26,18 @@ export default class ConfigLoader {
 
     try {
       let config: Partial<types.IConfigInterface> = {
-        amqpURL: '',
-        mongoURL: '',
+        amqp: {
+          url: '',
+          myQueue: '',
+          gatewayQueue: '',
+          myService: '',
+          gatewayService: '',
+        },
+        mongo: {
+          url: '',
+          db: '',
+          testDb: '',
+        },
         repository: '',
       };
 
@@ -98,7 +108,7 @@ export default class ConfigLoader {
 
     configKeys.forEach((k) => {
       if (k.includes('.')) {
-        // Spli key for nested values and validate
+        // Split key for nested values and validate
         const split = k.split('.');
         if (
           split.reduce<Record<string, unknown>>(
@@ -134,7 +144,35 @@ export default class ConfigLoader {
 
       if (target === undefined || target.length === 0) return;
 
-      config[key] = target;
+      switch (key) {
+        case EConfigKeys.MONGO_URL:
+          config.mongo!.url = target;
+          break;
+        case EConfigKeys.MONGO_DB:
+          config.mongo!.db = target;
+          break;
+        case EConfigKeys.MONGO_TEST_DB:
+          config.mongo!.testDb = target;
+          break;
+        case EConfigKeys.AMQP_URL:
+          config.amqp!.url = target;
+          break;
+        case EConfigKeys.AMQP_MY_QUEUE:
+          config.amqp!.myQueue = target;
+          break;
+        case EConfigKeys.AMQP_GATEWAY_QUEUE:
+          config.amqp!.gatewayQueue = target;
+          break;
+        case EConfigKeys.AMQP_MY_SERVICE:
+          config.amqp!.myService = target;
+          break;
+        case EConfigKeys.AMQP_GATEWAY_SERVICE:
+          config.amqp!.gatewayService = target;
+          break;
+        default:
+          (config[key] as string) = target;
+          break;
+      }
     });
 
     return config;

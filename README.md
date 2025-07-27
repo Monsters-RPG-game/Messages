@@ -151,14 +151,25 @@ TestConfig will be used, if you run your application on dev servers. This config
 Each config includes few elements:
 ```json
 {
-  "mongoURL": "mongodb://user:password@adress:port",
-  "amqpURL": "amqp://user:password@adress:port"
+  "mongo": {
+    "url": "mongodb://user:password@address:port",
+    "db": "database",
+    "testDb": "database-test"
+  },
+  "amqp": {
+    "url": "amqp://user:password@address:port",
+    "myQueue": "myQueue",
+    "gatewayQueue": "gatewayQueue",
+    "myService": "me",
+    "gatewayService": "gateway"
+  },
+  "repository": "mongo"
 }
 ```
 
-mongoURL is address for mongoDB
-
-amqpURL is address for rabbitMQ
+- mongo is object containing settings for mongoDb connections
+- repository is repository to be used. By default, mongoDB is only provider, but system is ready to accept another providers
+- amqp is config for connecting with rabbitMQ
 
 ## 4. Docs
 

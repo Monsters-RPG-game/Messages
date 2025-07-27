@@ -31,7 +31,7 @@ export default class Broker {
     const body = { ...this._queue[userId], payload, target };
     delete this._queue[userId];
     if (!this._channel) throw new NotConnectedError();
-    this._channel.publish(enums.EAmqQueues.Gateway, '', Buffer.from(JSON.stringify(body)));
+    this._channel.publish(ConfigLoader.getConfig().amqp.gatewayQueue, '', Buffer.from(JSON.stringify(body)));
   }
 
   close(): void {
@@ -48,7 +48,7 @@ export default class Broker {
   private sendHeartbeat(payload: unknown, target: enums.EMessageTypes): void {
     const body = { payload, target };
     if (!this._channel) throw new NotConnectedError();
-    this._channel.publish(enums.EAmqQueues.Gateway, '', Buffer.from(JSON.stringify(body)));
+    this._channel.publish(ConfigLoader.getConfig().amqp.gatewayQueue, '', Buffer.from(JSON.stringify(body)));
   }
 
   private async reconnect(): Promise<void> {
@@ -63,7 +63,7 @@ export default class Broker {
     }
 
     try {
-      const connection = await amqplib.connect(ConfigLoader.getConfig().amqpURL);
+      const connection = await amqplib.connect(ConfigLoader.getConfig().amqp.url);
 
       Log.log('Rabbit', 'Connected to rabbit');
       this._connection = connection;
@@ -108,18 +108,18 @@ export default class Broker {
   }
 
   private async createQueue(): Promise<void> {
-    Log.log('Rabbit', `Creating queue: ${enums.EAmqQueues.Gateway}`);
-    Log.log('Rabbit', `Creating queue: ${enums.EAmqQueues.Messages}`);
+    Log.log('Rabbit', `Creating queue: ${ConfigLoader.getConfig().amqp.gatewayQueue}`);
+    Log.log('Rabbit', `Creating queue: ${ConfigLoader.getConfig().amqp.myQueue}`);
 
-    await this._channel!.assertQueue(enums.EAmqQueues.Gateway, { durable: true });
-    await this._channel!.assertQueue(enums.EAmqQueues.Messages, { durable: true });
+    await this._channel!.assertQueue(ConfigLoader.getConfig().amqp.gatewayQueue, { durable: true });
+    await this._channel!.assertQueue(ConfigLoader.getConfig().amqp.myQueue, { durable: true });
     await this._channel!.consume(
-      enums.EAmqQueues.Messages,
+      ConfigLoader.getConfig().amqp.myQueue,
       (message) => {
         if (!message) return;
         const payload = JSON.parse(message.content.toString()) as types.IRabbitMessage;
         if (payload.target === enums.EMessageTypes.Heartbeat) {
-          this.sendHeartbeat(enums.EServices.Messages, enums.EMessageTypes.Heartbeat);
+          this.sendHeartbeat(ConfigLoader.getConfig().amqp.myService, enums.EMessageTypes.Heartbeat);
         } else {
           this._queue[payload.user.tempId] = payload;
           this.errorWrapper(async () => this.router.handleMessage(payload), payload.user.tempId);
@@ -127,12 +127,12 @@ export default class Broker {
       },
       { noAck: true },
     );
-    return this.sendHeartbeat(enums.EServices.Messages, enums.EMessageTypes.Heartbeat);
+    return this.sendHeartbeat(ConfigLoader.getConfig().amqp.myService, enums.EMessageTypes.Heartbeat);
   }
 
   private async closeChannel(): Promise<void> {
-    await this._channel!.purgeQueue(enums.EAmqQueues.Messages);
-    await this._channel!.deleteQueue(enums.EAmqQueues.Messages);
+    await this._channel!.purgeQueue(ConfigLoader.getConfig().amqp.myQueue);
+    await this._channel!.deleteQueue(ConfigLoader.getConfig().amqp.myQueue);
 
     await this._channel!.close().catch(() => null);
     this._channel = undefined;

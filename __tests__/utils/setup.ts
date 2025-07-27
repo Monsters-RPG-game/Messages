@@ -1,19 +1,26 @@
-import { afterAll, beforeAll } from '@jest/globals';
-import Connection from './connections.js';
+import { beforeEach,afterAll, afterEach, beforeAll } from '@jest/globals';
 import FakeBroker from './fakes/broker.js'
+import Mongo from '../../src/connections/mongo/factory.js'
 import State from '../../src/tools/state.js'
-
-const connection = new Connection();
+import { cleanDb } from './index.js'
 
 beforeAll(async () => {
-  await connection.connect();
+  if(State.mongo || State.broker) return
 
   const broker = new FakeBroker()
+
   State.broker = broker
+  State.mongo = await Mongo.create()
 });
+
+beforeEach(async () => {
+  await cleanDb()
+})
 
 afterAll(async () => {
-  await connection.close();
+  State.mongo.disconnect()
 });
 
-export default { connection };
+afterEach(async () => {
+    await cleanDb()
+})
