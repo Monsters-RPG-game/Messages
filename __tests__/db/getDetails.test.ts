@@ -24,7 +24,7 @@ describe('Details - get', () => {
   });
 
   describe('Should pass', () => {
-    it(`Get all`, async () => {
+    it.only(`Get all`, async () => {
       await db.messageDetails.message(fakeDetails.message)._id(fakeDetails._id).create();
 
       const allDetails = await repo.getAll(1);

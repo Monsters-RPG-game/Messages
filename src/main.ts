@@ -40,14 +40,13 @@ class App {
   private async handleInit(): Promise<void> {
     this.configLogger();
 
-    const mongo = new Mongo();
     const controllers = new Bootstrap();
     const broker = new Broker();
 
     State.broker = broker;
     State.controllers = controllers;
 
-    State.mongo = await mongo.create();
+    State.mongo = await Mongo.create();
     await broker.init();
     State.controllers.init();
 
